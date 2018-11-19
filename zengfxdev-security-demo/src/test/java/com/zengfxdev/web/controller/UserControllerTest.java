@@ -36,10 +36,28 @@ public class UserControllerTest {
 
 	@Test
 	public void whenQuerySuccess() throws Exception {
-		mockmvc.perform(
+		String result = mockmvc.perform(
 				get("/user").param("username", "zengfxdev").param("age", "16").param("ageto", "25").param("size", "15")
 //						.param("page", "3").param("sort", "age.desc")
 						.contentType(MediaType.APPLICATION_JSON_UTF8))
-				.andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(3));
+				.andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(3)).andReturn().getResponse()
+				.getContentAsString();
+		System.out.println(result);
 	}
+
+	@Test
+	public void whenGenInfoSuccess() throws Exception {
+		String result = mockmvc.perform(get("/user/1").contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(status().isOk()).andExpect(jsonPath("$.username").value("zengfxdev")).andReturn()
+				.getResponse().getContentAsString();
+
+		System.out.println(result);
+	}
+
+	@Test
+	public void whenGetInfoFail() throws Exception {
+		mockmvc.perform(get("/user/a").contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(status().is4xxClientError());
+	}
+
 }
